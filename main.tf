@@ -29,4 +29,8 @@ resource "aws_instance" "machine" {
   tags = {
     Name = "datacenter-machine-${count.index}"
   }
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
