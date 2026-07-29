@@ -1,0 +1,3 @@
+from predictor import lambda_handler
+
+lambda_handler(None, None)

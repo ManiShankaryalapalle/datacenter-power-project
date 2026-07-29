@@ -42,6 +42,14 @@ statement {
     ]
     resources = [aws_dynamodb_table.machine_metrics.arn]
   }
+statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:Query"
+    ]
+    resources = [aws_dynamodb_table.machine_metrics.arn]
+  }
+
 }
 
 resource "aws_iam_role_policy" "heat_simulator_policy" {
