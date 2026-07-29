@@ -35,6 +35,13 @@ data "aws_iam_policy_document" "lambda_permissions" {
     ]
     resources = ["*"]
   }
+statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:PutItem"
+    ]
+    resources = [aws_dynamodb_table.machine_metrics.arn]
+  }
 }
 
 resource "aws_iam_role_policy" "heat_simulator_policy" {

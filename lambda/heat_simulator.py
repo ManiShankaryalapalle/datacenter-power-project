@@ -1,7 +1,10 @@
-import boto3,random
+import boto3
+import random
 from datetime import datetime, timedelta
 
 cloudwatch = boto3.client('cloudwatch', region_name='ca-central-1')
+dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
+table = dynamodb.Table('machine-metrics')
 
 INSTANCE_IDS = [
     "i-0e5e3a90ce6121dd0",
@@ -47,6 +50,15 @@ def lambda_handler(event, context):
                     'Unit': 'None'
                 }
             ]
+        )
+
+        table.put_item(
+            Item={
+                'instance_id': instance_id,
+                'timestamp': int(end_time.timestamp()),
+                'cpu': str(cpu),
+                'temperature': str(temp)
+            }
         )
 
         print(instance_id, round(cpu, 2), round(temp, 2))
