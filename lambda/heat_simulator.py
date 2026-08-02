@@ -7,11 +7,10 @@ dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
 table = dynamodb.Table('machine-metrics')
 
 INSTANCE_IDS = [
-    "i-0e5e3a90ce6121dd0",
-    "i-0c6f72c8c9982b572",
-    "i-09d1721940afdb952",
+    "i-02b9adfa5a508b07f",
+    "i-0e1393dc717d2c144",
+    "i-0b5dd9a5de7c53afc",
 ]
-
 def lambda_handler(event, context):
     end_time = datetime.utcnow()
     start_time = end_time - timedelta(minutes=10)
