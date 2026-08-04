@@ -1,0 +1,7 @@
+{
+  "commands": [
+    "pkill -f 'http.server' || true",
+    "systemctl start httpd",
+    "systemctl status httpd --no-pager"
+  ]
+}
