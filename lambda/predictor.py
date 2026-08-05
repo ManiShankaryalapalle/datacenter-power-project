@@ -1,5 +1,8 @@
 import boto3
 
+TARGET_GROUP_ARN = "arn:aws:elasticloadbalancing:ca-central-1:165742852875:targetgroup/datacenter-web-tg/a0b081e8f256133c"
+
+elbv2 = boto3.client('elbv2', region_name='ca-central-1')
 dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
 table = dynamodb.Table('machine-metrics')
 
@@ -8,6 +11,7 @@ INSTANCE_IDS = [
     "i-0e1393dc717d2c144",
     "i-0b5dd9a5de7c53afc",
 ]
+
 def lambda_handler(event, context):
     results = {}
 
@@ -39,3 +43,22 @@ def lambda_handler(event, context):
 
     for instance_id, result in results.items():
         print(instance_id, result)
+
+        if "RISING" in result:
+            try:
+                elbv2.deregister_targets(
+                    TargetGroupArn=TARGET_GROUP_ARN,
+                    Targets=[{'Id': instance_id, 'Port': 80}]
+                )
+                print(f"  -> deregistered {instance_id} from load balancer")
+            except Exception as e:
+                print(f"  -> deregister failed for {instance_id}: {e}")
+        elif "stable" in result:
+            try:
+                elbv2.register_targets(
+                    TargetGroupArn=TARGET_GROUP_ARN,
+                    Targets=[{'Id': instance_id, 'Port': 80}]
+                )
+                print(f"  -> ensured {instance_id} is registered")
+            except Exception as e:
+                print(f"  -> register failed for {instance_id}: {e}")

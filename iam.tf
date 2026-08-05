@@ -49,7 +49,15 @@ statement {
     ]
     resources = [aws_dynamodb_table.machine_metrics.arn]
   }
-
+statement {
+    effect = "Allow"
+    actions = [
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:RegisterTargets",
+      "elasticloadbalancing:DescribeTargetHealth"
+    ]
+    resources = [aws_lb_target_group.web_tg.arn]
+  }
 }
 data "aws_iam_policy_document" "ec2_assume_role" {
   statement {
