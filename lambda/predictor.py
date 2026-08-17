@@ -35,7 +35,7 @@ def lambda_handler(event, context):
         recent_avg = sum(recent) / len(recent)
         previous_avg = sum(previous) / len(previous)
 
-        if recent_avg > previous_avg + 1.0:
+        if recent_avg > previous_avg + 3.0:
             status = "RISING"
         else:
             status = "stable"
