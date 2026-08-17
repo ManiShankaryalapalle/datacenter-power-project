@@ -35,21 +35,24 @@ data "aws_iam_policy_document" "lambda_permissions" {
     ]
     resources = ["*"]
   }
-statement {
+
+  statement {
     effect = "Allow"
     actions = [
       "dynamodb:PutItem"
     ]
     resources = [aws_dynamodb_table.machine_metrics.arn]
   }
-statement {
+
+  statement {
     effect = "Allow"
     actions = [
       "dynamodb:Query"
     ]
     resources = [aws_dynamodb_table.machine_metrics.arn]
   }
-statement {
+
+  statement {
     effect = "Allow"
     actions = [
       "elasticloadbalancing:DeregisterTargets",
@@ -58,7 +61,22 @@ statement {
     ]
     resources = [aws_lb_target_group.web_tg.arn]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
+    resources = [aws_sns_topic.load_alerts.arn]
+  }
 }
+
+resource "aws_iam_role_policy" "heat_simulator_policy" {
+  name   = "heat-simulator-lambda-policy"
+  role   = aws_iam_role.heat_simulator_role.id
+  policy = data.aws_iam_policy_document.lambda_permissions.json
+}
+
 data "aws_iam_policy_document" "ec2_assume_role" {
   statement {
     effect = "Allow"
@@ -86,8 +104,4 @@ resource "aws_iam_instance_profile" "ec2_ssm_profile" {
   name = "ec2-ssm-instance-profile"
   role = aws_iam_role.ec2_ssm_role.name
 }
-resource "aws_iam_role_policy" "heat_simulator_policy" {
-  name   = "heat-simulator-lambda-policy"
-  role   = aws_iam_role.heat_simulator_role.id
-  policy = data.aws_iam_policy_document.lambda_permissions.json
-}
+
